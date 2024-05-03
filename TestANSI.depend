@@ -1,0 +1,22 @@
+# depslib dependency file v1.0
+1713892990 source:c:\c++\codeblocks\engine v3\main.cpp
+	"objects.h"
+	"engine.h"
+	"key_input.h"
+	"pong.h"
+
+1713891533 c:\c++\codeblocks\engine v3\objects.h
+	<vector>
+
+1713892319 c:\c++\codeblocks\engine v3\engine.h
+	<windows.h>
+	<string>
+	<iostream>
+	<sstream>
+	"objects.h"
+
+1713891337 c:\c++\codeblocks\engine v3\key_input.h
+
+1713893694 c:\c++\codeblocks\engine v3\pong.h
+	<cmath>
+
