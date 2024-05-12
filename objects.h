@@ -58,13 +58,27 @@ struct RGBColor
     RGBColor(int _r, int _g, int _b) : r(_r), g(_g), b(_b) {}
 };
 
+enum Mode
+{
+    MONO = 1,
+    DUO,
+    TRIO,
+    QUATTRO,
+    QUINQUE,
+    SEX,
+    SEPTEM,
+    OCTO,
+    NOVEM,
+    DECEM
+};
+
 Texture GenerateBackground(RGBColor color, unsigned int width, unsigned int height);
 
 struct Player{
     Point pos;
     RGBColor color;
 
-    Player(Point _pos, RGBColor _color) : pos(_pos), color(_color) {}
+    Player(Point _pos, RGBColor _color) : pos({_pos.x * 2, _pos.y}), color(_color) {}
 };
 
 struct Wall

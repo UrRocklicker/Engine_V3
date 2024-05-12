@@ -46,14 +46,14 @@ std::vector<Wall> Walls = {wall_left, wall_top, wall_right, wall_bottom};
 struct Ball
 {
     Point pos;
-    RGBColor color;
+    Texture image;
     Rotation angle;
     float speed;
 
-    Ball(Point _pos, RGBColor _color, double _rotation, float _speed) : pos(_pos), color(_color), angle(_rotation), speed(_speed) {}
+    Ball(Point _pos, Texture _image, double _rotation, float _speed) : pos(_pos), image(_image), angle(_rotation), speed(_speed) {}
 };
 
-Ball ball({board_x / 2, board_y / 2}, {255, 20, 0}, 0.0, 0.0f);
+Ball ball({board_x / 2, board_y / 2}, GenerateBackground({255, 0, 0}, 3, 3), 0.0, 0.0f);
 
 // Basic variables
 bool playing = true;
@@ -65,8 +65,15 @@ void GameLoop()
     InitializeEngine();
     CursorVisible(false);
 
-    BufferDisplay(Background);
-    BufferDrawWalls(Walls);
+    Buffer buffer({width, height});
+    WriteToBuffer(Background, {0,0}, buffer);
+    WriteToBuffer(Walls, buffer);
+
+    //BufferDisplay(GenerateBackground({}))
+    std::cin.get();
+
+    DrawBuffer(buffer);
+    BufferDraw(ball.image, ball.pos);
 
     while(playing)
     {
@@ -79,6 +86,7 @@ void GameLoop()
                 playing = false;
             }
         }
+        Sleep(50);
     }
 
     // Update user input

@@ -152,9 +152,9 @@ inline std::string RGBString(Texture T, int index)
 inline void WriteToBuffer(Texture T, Point pos, Buffer& buffer)
 {
     int offset = pos.x + (pos.y * buffer.Size.x);
-    for(int i = 0; i < T.sizey; i++)
+    for(unsigned int i = 0; i < T.sizey; i++)
     {
-        for(int j = 0; j < T.sizex; j++)
+        for(unsigned int j = 0; j < T.sizex; j++)
         {
             buffer.write(j + offset, RGBString(T, j));
         }
@@ -168,6 +168,44 @@ inline void WriteToBuffer(Texture T, Point pos, Buffer& buffer)
             buffer.append(buffer.Size.x - 1 + (buffer.Size.x * a), "\n");
         }
     }
+}
+
+inline void WriteToBuffer(std::vector<Wall> Walls, Buffer& buffer)
+{
+    for(unsigned int w = 0; w < Walls.size(); w++)
+    {
+        Wall wall = Walls[w];
+        Point pos = wall.startpos;
+        Texture T = wall.image;
+
+        int offset = pos.x + (pos.y * buffer.Size.x);
+        for(unsigned int i = 0; i < T.sizey; i++)
+        {
+            for(unsigned int j = 0; j < T.sizex; j++)
+            {
+                buffer.write(j + offset, RGBString(T, j));
+            }
+            offset = pos.x + ((pos.y + i + 1) * buffer.Size.x);
+        }
+
+        for(int a = 0; a < buffer.Size.y; a++)
+        {
+            if(buffer.Contents[buffer.Size.x - 1 + (buffer.Size.x * a)][buffer.Contents[buffer.Size.x - 1 + (buffer.Size.x * a)].size() - 1] != '\n')
+            {
+                buffer.append(buffer.Size.x - 1 + (buffer.Size.x * a), "\n");
+            }
+        }
+    }
+}
+
+inline void DrawBuffer(Buffer& buffer)
+{
+    std::stringstream write;
+    for(std::string line : buffer.Contents)
+    {
+        write << line;
+    }
+    std::cout << write.str();
 }
 
 inline void drawLine(Point p1, Point p2) {
@@ -197,19 +235,6 @@ inline void drawLine(Point p1, Point p2) {
     }
 }
 
-inline Texture GenerateBackground(unsigned int r, unsigned int g, unsigned int b, unsigned int x, unsigned int y)
-{
-    std::vector<unsigned int> background = {};
-
-    for(unsigned int i = 0; i < x * y; i++)
-    {
-        background.push_back(r);
-        background.push_back(g);
-        background.push_back(b);
-    }
-    return Texture(x, y, background);
-}
-
 inline Texture GenerateBackground(RGBColor color, unsigned int width, unsigned int height)
 {
     std::vector<unsigned int> background = {};
@@ -219,6 +244,41 @@ inline Texture GenerateBackground(RGBColor color, unsigned int width, unsigned i
         background.push_back(color.r);
         background.push_back(color.g);
         background.push_back(color.b);
+    }
+    return Texture(width, height, background);
+}
+
+inline Texture GenerateBackground(std::vector<RGBColor> colors, unsigned int width, unsigned int height)
+{
+    std::vector<unsigned int> background = {};
+
+    for(unsigned int i = 0; i < width * height; i++)
+    {
+        for(unsigned int j = 0; j < colors.size(); j++)
+        {
+            background.push_back(colors[j].r);
+            background.push_back(colors[j].g);
+            background.push_back(colors[j].b);
+        }
+    }
+    return Texture(width, height, background);
+}
+
+inline Texture GenerateBackground(Mode mode, std::vector<RGBColor> colors, unsigned int width, unsigned int height)
+{
+    std::vector<unsigned int> background = {};
+
+    for(unsigned int i = 0; i < width * height; i++)
+    {
+        for(unsigned int j = 0; j < colors.size(); j++)
+        {
+            for(int l = 0; l < mode; l++)
+            {
+                background.push_back(colors[j].r);
+                background.push_back(colors[j].g);
+                background.push_back(colors[j].b);
+            }
+        }
     }
     return Texture(width, height, background);
 }
