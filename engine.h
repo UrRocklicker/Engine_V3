@@ -18,6 +18,9 @@ Example colored text using ANSI escape codes:
     std::cout << "\033[1;31mBold red text\033[0m\n";
     std::cout << "\033[38;2;100;100;100mCustom Gray text\033[0m\n";
     RGBTEXT("6","127","210", "Cheese soup" << char(219);
+
+    Example for Todo list (in view)
+
 */
 
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -52,6 +55,32 @@ inline void Display(Texture T, std::string characters)
         if((i + 3) % (T.sizex * 3) == 0 && i != 0)
         {
             std::cout << std::endl;
+        }
+    }
+}
+
+inline void WriteToTexture(Texture& target, Point pos, Texture hitman)
+{
+    if(hitman.sizex > target.sizex ||
+       hitman.sizey > target.sizey ||
+       pos.x < 0 || static_cast<unsigned int>(pos.x) > target.sizex ||
+       pos.y < 0 || static_cast<unsigned int>(pos.y) > target.sizey ||
+       pos.x + hitman.sizex > target.sizex ||
+       pos.y + hitman.sizey > target.sizey)
+    {
+        std::cout << "Hitman has missed the target\n";
+        return;
+    }
+    else
+    {
+        for(unsigned int i = 0; i < hitman.sizey; i++)
+        {
+            for(unsigned int j = 0; j < hitman.sizex * 3; j+=3)
+            {
+                target.texture[j + pos.x * 3 + ((i + pos.y) * target.sizex * 3)    ] = hitman.texture[j    ];
+                target.texture[j + pos.x * 3 + ((i + pos.y) * target.sizex * 3) + 1] = hitman.texture[j + 1];
+                target.texture[j + pos.x * 3 + ((i + pos.y) * target.sizex * 3) + 2] = hitman.texture[j + 2];
+            }
         }
     }
 }
@@ -333,6 +362,11 @@ inline void MovePlayer(int dx, int dy, Player &player, std::vector<Wall>& walls,
     player.pos = newPos;
 
     DrawPixelAtPoint(player.color, player.pos);
+}
+
+inline void ClearScreen()
+{
+    system("cls");
 }
 
 inline void InitializeEngine()

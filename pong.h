@@ -29,17 +29,18 @@ public:
 // Background
 const int width = 152;
 const int height = 112;
-Texture Background = GenerateBackground({190, 210, 255}, width, height);
+Texture Background = GenerateBackground({40, 50, 100}, width, height);
 
 const int board_x = Background.sizex;
 const int board_y = Background.sizey;
 
 // Walls
 const int thickness = 3;
-Wall wall_left({0,0}, thickness, height, {255, 190, 255});
-Wall wall_top({0,0}, width, thickness, {255, 190, 255});
-Wall wall_right({width - thickness,0}, thickness, height, {255, 190, 255});
-Wall wall_bottom({0,height - thickness}, width, thickness, {255, 190, 255});
+RGBColor wall_color(40, 50, 180);
+Wall wall_left({0,0}, thickness, height, wall_color);
+Wall wall_top({0,0}, width, thickness, wall_color);
+Wall wall_right({width - thickness,0}, thickness, height, wall_color);
+Wall wall_bottom({0,height - thickness}, width, thickness, wall_color);
 std::vector<Wall> Walls = {wall_left, wall_top, wall_right, wall_bottom};
 
 // balls, paddles, score
@@ -53,7 +54,12 @@ struct Ball
     Ball(Point _pos, Texture _image, double _rotation, float _speed) : pos(_pos), image(_image), angle(_rotation), speed(_speed) {}
 };
 
-Ball ball({board_x / 2, board_y / 2}, GenerateBackground({255, 0, 0}, 3, 3), 0.0, 0.0f);
+//TODO (user#1#): Fix the WriteToTexture bit below. It works in main, but not here for some reason.
+Texture ball_texture = GenerateBackground(wall_color, 3, 3);
+Texture outline = GenerateBackground({40,50,140}, 3, 1);
+//WriteToTexture(ball_texture, {0,0}, outline);
+
+Ball ball({board_x / 2, board_y / 2}, ball_texture, 0.0, 0.0f);
 
 // Basic variables
 bool playing = true;
@@ -66,11 +72,14 @@ void GameLoop()
     CursorVisible(false);
 
     Buffer buffer({width, height});
+    WriteToBuffer(GenerateBackground({ {20,20,20}, {150,150,0} }, width, height), {0,0}, buffer);
+
+    DrawBuffer(buffer);
+    std::cin.get();
+    ClearScreen();
+
     WriteToBuffer(Background, {0,0}, buffer);
     WriteToBuffer(Walls, buffer);
-
-    //BufferDisplay(GenerateBackground({}))
-    std::cin.get();
 
     DrawBuffer(buffer);
     BufferDraw(ball.image, ball.pos);
