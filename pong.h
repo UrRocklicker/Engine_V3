@@ -27,8 +27,8 @@ public:
 };
 
 // Background
-const int width = 152;
-const int height = 112;
+const int width = 76;
+const int height = 56;
 Texture Background = GenerateBackground({40, 50, 100}, width, height);
 
 const int board_x = Background.sizex;
@@ -43,7 +43,7 @@ Wall wall_right({width - thickness,0}, thickness, height, wall_color);
 Wall wall_bottom({0,height - thickness}, width, thickness, wall_color);
 std::vector<Wall> Walls = {wall_left, wall_top, wall_right, wall_bottom};
 
-// balls, paddles, score
+// ball
 struct Ball
 {
     Point pos;
@@ -54,30 +54,67 @@ struct Ball
     Ball(Point _pos, Texture _image, double _rotation, float _speed) : pos(_pos), image(_image), angle(_rotation), speed(_speed) {}
 };
 
+bool Collision(Point position, Point dimensions, const Wall& wall)
+{
+    // Calculate paddle's center
+    float paddleCenterX = position.x + (dimensions.x / 2); // Adjusted for paddle's size
+    float paddleCenterY = position.y + (dimensions.y / 2); // Adjusted for paddle's size
+
+    // Calculate bounds of the wall
+    float wallLeft = static_cast<float>(wall.startpos.x * 2);
+    float wallRight = static_cast<float>(wall.startpos.x * 2 + wall.width * 2);
+    float wallTop = static_cast<float>(wall.startpos.y);
+    float wallBottom = static_cast<float>(wall.startpos.y + wall.height);
+
+    // Check if paddle's center is within wall bounds
+    return paddleCenterX >= wallLeft &&
+           paddleCenterX <= wallRight &&
+           paddleCenterY >= wallTop &&
+           paddleCenterY <= wallBottom;
+}
+
+void MovePaddle(int dx, int dy, Paddle& paddle, std::vector<Wall> walls)
+{
+    for(Wall& wall : walls)
+    {
+        if(!Collision({paddle.pos.x + dx, paddle.pos.y + dy}, {paddle.image.sizex, paddle.image.sizey}, wall))
+        {
+            paddle.pos = {paddle.pos.x + dx, paddle.pos.y + dy};
+        }
+    }
+}
+
+// score
+
 // Basic variables
 bool playing = true;
 
 // GameLoop return true or false to tell if win (?) or maybe separate win function
 void GameLoop()
 {
-    Ball ball({70,50}, GenerateBackground({40,50,220}, 3, 3), 0.0, 0.0f);
+    Ball ball({10,10}, GenerateBackground({40,50,220}, 3, 3), 0.0, 0.0f);
+    Ball ball2({10,15}, GenerateBackground({40,50,220}, 3, 3), 0.0, 0.0f);
     WriteToTexture(ball.image, GenerateBackground({40,50,180}, 1, 1), {1,1});
+
+    Paddle paddle({0,0}, GenerateBackground({255,255,255}, 2, 5));
 
     // Initialize screen
     InitializeEngine();
     CursorVisible(false);
 
     Buffer buffer({width, height});
-    WriteToBuffer(GenerateBackground({ {20,20,20}, {150,150,0} }, width, height), {0,0}, buffer);
 
     ClearScreen();
 
     WriteToBuffer(Background, {0,0}, buffer);
     WriteToBuffer(Walls, buffer);
     WriteToBuffer(ball.image, ball.pos, buffer);
+    WriteToBuffer(ball2.image, ball.pos, buffer);
+    WriteToBuffer(paddle.image, paddle.pos, buffer);
 
     DrawBuffer(buffer);
 
+    // Update user input
     while(playing)
     {
         std::vector<char> current = CheckKeys();
@@ -85,6 +122,9 @@ void GameLoop()
         {
             switch(current[i])
             {
+            case 'A':
+                MovePaddle(0, -1, paddle, Walls);
+                break;
             case VK_ESCAPE:
                 playing = false;
             }
@@ -92,7 +132,6 @@ void GameLoop()
         Sleep(50);
     }
 
-    // Update user input
     // Update enemy movement
     // Update ball movement
 

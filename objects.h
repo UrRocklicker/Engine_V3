@@ -9,6 +9,12 @@ struct Point {
     Point(int _x, int _y) : x(_x), y(_y) {}
 };
 
+struct Line
+{
+    Point Start, End;
+    Line(Point _Start, Point _End) : Start(_Start), End(_End) {}
+};
+
 struct Buffer {
     Point Size;
     std::vector<std::string> Contents;
@@ -79,6 +85,14 @@ struct Player{
     RGBColor color;
 
     Player(Point _pos, RGBColor _color) : pos({_pos.x * 2, _pos.y}), color(_color) {}
+};
+
+struct Paddle
+{
+    Point pos;
+    Texture image;
+
+    Paddle(Point _pos, Texture _image) : pos(_pos), image(_image) {}
 };
 
 struct Wall

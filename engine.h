@@ -329,7 +329,7 @@ inline void DrawPixelAtPoint(RGBColor color, Point point)
     RGBText(color, "\u2588\u2588");
 }
 
-inline bool isColliding(const Player& player, Wall& wall) {
+inline bool isColliding(const Player& player, const Wall& wall) {
     // Calculate player's center
     float playerCenterX = player.pos.x + 1.0; // Adjusted for player's size
     float playerCenterY = player.pos.y + 0.5; // Adjusted for player's size
