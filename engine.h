@@ -59,7 +59,7 @@ inline void Display(Texture T, std::string characters)
     }
 }
 
-inline void WriteToTexture(Texture& target, Point pos, Texture hitman)
+inline void WriteToTexture(Texture& target, Texture hitman, Point pos)
 {
     if(hitman.sizex > target.sizex ||
        hitman.sizey > target.sizey ||
@@ -185,7 +185,7 @@ inline void WriteToBuffer(Texture T, Point pos, Buffer& buffer)
     {
         for(unsigned int j = 0; j < T.sizex; j++)
         {
-            buffer.write(j + offset, RGBString(T, j));
+            buffer.write(j + offset, RGBString(T, j + (i * T.sizey)));
         }
         offset = pos.x + ((pos.y + i + 1) * buffer.Size.x);
     }

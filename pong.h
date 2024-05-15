@@ -54,19 +54,15 @@ struct Ball
     Ball(Point _pos, Texture _image, double _rotation, float _speed) : pos(_pos), image(_image), angle(_rotation), speed(_speed) {}
 };
 
-//TODO (user#1#): Fix the WriteToTexture bit below. It works in main, but not here for some reason.
-Texture ball_texture = GenerateBackground(wall_color, 3, 3);
-Texture outline = GenerateBackground({40,50,140}, 3, 1);
-//WriteToTexture(ball_texture, {0,0}, outline);
-
-Ball ball({board_x / 2, board_y / 2}, ball_texture, 0.0, 0.0f);
-
 // Basic variables
 bool playing = true;
 
 // GameLoop return true or false to tell if win (?) or maybe separate win function
 void GameLoop()
 {
+    Ball ball({70,50}, GenerateBackground({40,50,220}, 3, 3), 0.0, 0.0f);
+    WriteToTexture(ball.image, GenerateBackground({40,50,180}, 1, 1), {1,1});
+
     // Initialize screen
     InitializeEngine();
     CursorVisible(false);
@@ -74,15 +70,13 @@ void GameLoop()
     Buffer buffer({width, height});
     WriteToBuffer(GenerateBackground({ {20,20,20}, {150,150,0} }, width, height), {0,0}, buffer);
 
-    DrawBuffer(buffer);
-    std::cin.get();
     ClearScreen();
 
     WriteToBuffer(Background, {0,0}, buffer);
     WriteToBuffer(Walls, buffer);
+    WriteToBuffer(ball.image, ball.pos, buffer);
 
     DrawBuffer(buffer);
-    BufferDraw(ball.image, ball.pos);
 
     while(playing)
     {
